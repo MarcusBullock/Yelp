@@ -16,7 +16,9 @@ feature 'Restaurants' do
 
     before do
       Restaurant.create(name: 'Hawksmoor')
+      sign_up
     end
+
 
     scenario '-> should correctly display the added restaurant' do
       visit '/restaurants'
@@ -27,6 +29,10 @@ feature 'Restaurants' do
 
 
   context 'User Adding Restaurants' do
+
+    before do
+      sign_up
+    end
 
     scenario '-> should display the restaurant the user added' do
       visit '/restaurants'
@@ -55,6 +61,7 @@ feature 'Restaurants' do
 
     before do
       Restaurant.create(name: 'Hawksmoor')
+      sign_up
     end
 
     scenario '-> lets users edit restaurants in the list' do
@@ -71,6 +78,7 @@ feature 'Restaurants' do
 
     before do
       Restaurant.create(name: 'Hawksmoor')
+      sign_up
     end
 
     scenario '-> removes a restaurant when a user clicks a delete link' do
@@ -82,6 +90,10 @@ feature 'Restaurants' do
   end
 
   context 'Creating Restaurants' do
+
+    before do
+      sign_up
+    end
 
     context ' -> Invalid Restaurant' do
       scenario '-> it does not let you enter in a name that is too short' do
@@ -97,11 +109,25 @@ feature 'Restaurants' do
         Restaurant.create(name: 'Bumbar')
         restaurant = Restaurant.new(name: 'Bumbar')
         expect(restaurant).to have(1).error_on(:name)
-      end 
+      end
     end
   end
 
 
+  context 'user limitations' do
 
+    scenario '-> should not let the user create reviews when not logged in' do
+      visit('/restaurants')
+      click_link 'Add a restaurant'
+      expect(page).to have_content('Log in')
+    end
+  end
+end
 
+def sign_up
+  visit('/users/sign_up')
+  fill_in('Email', with: 'test@example.com')
+  fill_in('Password', with: 'testtest')
+  fill_in('Password confirmation', with: 'testtest')
+  click_button('Sign up')
 end

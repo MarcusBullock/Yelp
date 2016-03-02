@@ -29,6 +29,9 @@ gem 'devise'
 # facebook login authoritisation
 gem 'omniauth-facebook'
 
+# dotenv
+gem 'dotenv-rails'
+
 # Use Unicorn as the app server
 # gem 'unicorn'
 
