@@ -106,8 +106,8 @@ feature 'Restaurants' do
       end
 
       scenario '-> it requires a unique name' do
-        Restaurant.create(name: 'Bumbar')
-        restaurant = Restaurant.new(name: 'Bumbar')
+        Restaurant.create(name: 'Bar')
+        restaurant = Restaurant.new(name: 'Bar')
         expect(restaurant).to have(1).error_on(:name)
       end
     end
@@ -119,7 +119,22 @@ feature 'Restaurants' do
     scenario '-> should not let the user create reviews when not logged in' do
       visit('/restaurants')
       click_link 'Add a restaurant'
-      expect(page).to have_content('Log in')
+      expect(current_path).to eq('/users/sign_in')
+    end
+
+    scenario "-> should not reviews be deleted by non-logged in users" do
+      Restaurant.create(name: 'Bar')
+      visit('/restaurants')
+      click_link 'Delete Bar'
+      expect(current_path).to eq('/users/sign_in')
+    end
+
+    scenario "-> users can only delete reviews they have created" do
+      Restaurant.create(name: 'Bar')
+      sign_up
+      review
+      review
+      expect(page).to have_content('Users can only leave one review per restaurant')
     end
   end
 end
@@ -130,4 +145,13 @@ def sign_up
   fill_in('Password', with: 'testtest')
   fill_in('Password confirmation', with: 'testtest')
   click_button('Sign up')
+end
+
+def review
+  Restaurant.create(name: 'Bar')
+  visit('/restaurants')
+  click_link('Review Bar')
+  fill_in('Thoughts', with: 'Great')
+  select '5', from: 'Rating'
+  click_button('Leave Review')
 end

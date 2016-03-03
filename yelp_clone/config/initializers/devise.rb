@@ -18,7 +18,7 @@ Devise.setup do |config|
   # config.mailer = 'Devise::Mailer'
 
   #Facebook stuff
-  config.omniauth :facebook, '351334284990690', '8d9800767d4e9515c859f9f901ebe9b1',
+  config.omniauth :facebook, Rails.application.secrets.facebook_app_id, Rails.application.secrets.facebook_app_secret,
                   callback_url: "http://localhost:3000"
 
   # ==> ORM configuration
